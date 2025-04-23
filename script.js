@@ -1,4 +1,5 @@
 const timerDisplay = document.querySelector('.timer-display');
+
 const toggleBtn = document.getElementById('toggleBtn');
 const resetBtn = document.getElementById('resetBtn');
 const add5Btn = document.getElementById('add5Btn');
@@ -23,7 +24,6 @@ function toggleTimer() {
         isRunning = true;
         toggleBtn.textContent = 'Pause';
         toggleBtn.classList.add('active');
-        minutesInput.disabled = true;
         
         timerId = setInterval(() => {
             timeLeft--;
@@ -63,7 +63,6 @@ function add5Minutes() {
 function resetControls() {
     toggleBtn.textContent = 'Start';
     toggleBtn.classList.remove('active');
-    minutesInput.disabled = false;
     isRunning = false;
 }
 
@@ -71,10 +70,10 @@ function handleMinutesInput() {
     const value = parseInt(minutesInput.value);
     if (value < 1) minutesInput.value = 1;
     if (value > 60) minutesInput.value = 60;
-    if (timerId === null && !isRunning) {
-        timeLeft = parseInt(minutesInput.value) * 60;
-        updateDisplay();
-    }
+    
+    // Update the timer immediately with the new value
+    timeLeft = parseInt(minutesInput.value) * 60;
+    updateDisplay();
 }
 
 // Initial setup
