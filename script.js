@@ -1,13 +1,12 @@
 const timerDisplay = document.querySelector('.timer-display');
-const startBtn = document.getElementById('startBtn');
-const pauseBtn = document.getElementById('pauseBtn');
+const toggleBtn = document.getElementById('toggleBtn');
 const resetBtn = document.getElementById('resetBtn');
 const add5Btn = document.getElementById('add5Btn');
 const minutesInput = document.getElementById('minutesInput');
 
 let timeLeft = 25 * 60; // 25 minutes in seconds
 let timerId = null;
-let isPaused = false;
+let isRunning = false;
 
 function updateDisplay() {
     const minutes = Math.floor(timeLeft / 60);
@@ -15,14 +14,15 @@ function updateDisplay() {
     timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
-function startTimer() {
-    if (timerId === null) {
-        if (!isPaused) {
+function toggleTimer() {
+    if (!isRunning) {
+        // Start timer
+        if (timerId === null) {
             timeLeft = parseInt(minutesInput.value) * 60;
         }
-        isPaused = false;
-        startBtn.disabled = true;
-        pauseBtn.disabled = false;
+        isRunning = true;
+        toggleBtn.textContent = 'Pause';
+        toggleBtn.classList.add('active');
         minutesInput.disabled = true;
         
         timerId = setInterval(() => {
@@ -36,23 +36,20 @@ function startTimer() {
                 alert('Time is up! Take a break!');
             }
         }, 1000);
-    }
-}
-
-function pauseTimer() {
-    if (timerId !== null) {
+    } else {
+        // Pause timer
         clearInterval(timerId);
         timerId = null;
-        isPaused = true;
-        startBtn.disabled = false;
-        pauseBtn.disabled = true;
+        isRunning = false;
+        toggleBtn.textContent = 'Start';
+        toggleBtn.classList.remove('active');
     }
 }
 
 function resetTimer() {
     clearInterval(timerId);
     timerId = null;
-    isPaused = false;
+    isRunning = false;
     timeLeft = parseInt(minutesInput.value) * 60;
     updateDisplay();
     resetControls();
@@ -64,28 +61,27 @@ function add5Minutes() {
 }
 
 function resetControls() {
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
+    toggleBtn.textContent = 'Start';
+    toggleBtn.classList.remove('active');
     minutesInput.disabled = false;
+    isRunning = false;
 }
 
 function handleMinutesInput() {
     const value = parseInt(minutesInput.value);
     if (value < 1) minutesInput.value = 1;
     if (value > 60) minutesInput.value = 60;
-    if (timerId === null && !isPaused) {
+    if (timerId === null && !isRunning) {
         timeLeft = parseInt(minutesInput.value) * 60;
         updateDisplay();
     }
 }
 
 // Initial setup
-pauseBtn.disabled = true;
 updateDisplay();
 
 // Event listeners
-startBtn.addEventListener('click', startTimer);
-pauseBtn.addEventListener('click', pauseTimer);
+toggleBtn.addEventListener('click', toggleTimer);
 resetBtn.addEventListener('click', resetTimer);
 add5Btn.addEventListener('click', add5Minutes);
 minutesInput.addEventListener('change', handleMinutesInput); 
