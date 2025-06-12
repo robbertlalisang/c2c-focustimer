@@ -11,54 +11,40 @@ let isRunning = false;
 
 const modeDisplay = document.createElement('div');
 modeDisplay.className = 'mode-display';
-modeDisplay.textContent = 'Work';
-document.querySelector('.timer-content').insertBefore(modeDisplay, timerDisplay);
+modeDisplay.textContent = 'Focusing';
+const hintText = document.createElement('div');
+hintText.className = 'hint-text';
+hintText.textContent = 'Start break now';
+const timerContent = document.querySelector('.timer-content');
+timerContent.insertBefore(modeDisplay, timerContent.children[1]);
+timerContent.insertBefore(hintText, timerContent.children[2]);
 
-const chime = new Audio('https://cdn.pixabay.com/audio/2022/10/16/audio_12b6fae7b6.mp3'); // Royalty-free chime from Pixabay
+const triangle = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b7c8e.mp3'); // New triangle sound
 
 let isWorkMode = true;
 let workDuration = 25 * 60;
 let breakDuration = 5 * 60;
 
-// Add after modeDisplay creation
-const switchModeBtn = document.createElement('button');
-switchModeBtn.className = 'switch-mode-btn';
-switchModeBtn.textContent = isWorkMode ? 'Start Break' : 'Start Work';
-document.querySelector('.timer-controls').insertAdjacentElement('afterend', switchModeBtn);
-
-switchModeBtn.addEventListener('click', () => {
-    if (isWorkMode) {
-        isWorkMode = false;
-        timeLeft = breakDuration;
-    } else {
-        isWorkMode = true;
-        timeLeft = workDuration;
-    }
-    updateDisplay();
-    if (timerId) clearInterval(timerId);
-    timerId = null;
-    isRunning = false;
-    toggleTimer();
-});
+// Hide switchModeBtn and time-input (handled in CSS)
 
 function updateDisplay() {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
     timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    modeDisplay.textContent = isWorkMode ? 'Work' : 'Break';
-    switchModeBtn.textContent = isWorkMode ? 'Start Break' : 'Start Work';
+    modeDisplay.textContent = isWorkMode ? 'Focusing' : 'Break';
+    hintText.textContent = isWorkMode ? 'Start break now' : 'Start focusing now';
 }
 
 function switchMode() {
     isWorkMode = !isWorkMode;
     timeLeft = isWorkMode ? workDuration : breakDuration;
     updateDisplay();
-    toggleTimer(); // Auto-start next session
+    isRunning = false;
+    toggleTimer(); // Always auto-start next session
 }
 
-function toggleTimer() {
+function toggleTimer(auto = false) {
     if (!isRunning) {
-        // Start timer
         if (timerId === null) {
             if (isWorkMode) {
                 timeLeft = workDuration;
@@ -69,22 +55,33 @@ function toggleTimer() {
         isRunning = true;
         toggleBtn.textContent = 'Pause';
         toggleBtn.classList.add('active');
-        
         timerId = setInterval(() => {
             timeLeft--;
             updateDisplay();
-            
             if (timeLeft === 0) {
                 clearInterval(timerId);
                 timerId = null;
-                chime.play();
+                triangle.play();
+                // Notification
+                if (window.Notification && Notification.permission === 'granted') {
+                    new Notification(isWorkMode ? 'Focus session over! Time for a break.' : 'Break over! Time to get back to work.');
+                } else if (window.Notification && Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            new Notification(isWorkMode ? 'Focus session over! Time for a break.' : 'Break over! Time to get back to work.');
+                        } else {
+                            alert(isWorkMode ? 'Focus session over! Time for a break.' : 'Break over! Time to get back to work.');
+                        }
+                    });
+                } else {
+                    alert(isWorkMode ? 'Focus session over! Time for a break.' : 'Break over! Time to get back to work.');
+                }
                 setTimeout(() => {
                     switchMode();
-                }, 500); // Short delay before switching mode
+                }, 500);
             }
         }, 1000);
     } else {
-        // Pause timer
         clearInterval(timerId);
         timerId = null;
         isRunning = false;
@@ -135,4 +132,52 @@ updateDisplay();
 toggleBtn.addEventListener('click', toggleTimer);
 resetBtn.addEventListener('click', resetTimer);
 add5Btn.addEventListener('click', add5Minutes);
-minutesInput.addEventListener('change', handleMinutesInput); 
+minutesInput.addEventListener('change', handleMinutesInput);
+
+hintText.addEventListener('click', () => {
+    isWorkMode = !isWorkMode;
+    timeLeft = isWorkMode ? workDuration : breakDuration;
+    updateDisplay();
+    if (timerId) clearInterval(timerId);
+    timerId = null;
+    isRunning = false;
+    toggleTimer();
+});
+
+// Settings menu logic
+const gearIcon = document.querySelector('.gear-icon');
+const settingsMenu = document.querySelector('.settings-menu');
+const workInput = document.getElementById('workInput');
+const breakInput = document.getElementById('breakInput');
+const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+
+gearIcon.addEventListener('click', () => {
+    settingsMenu.style.display = settingsMenu.style.display === 'block' ? 'none' : 'block';
+});
+
+saveSettingsBtn.addEventListener('click', () => {
+    let newWork = parseInt(workInput.value);
+    let newBreak = parseInt(breakInput.value);
+    if (newWork < 1) newWork = 1;
+    if (newWork > 60) newWork = 60;
+    if (newBreak < 1) newBreak = 1;
+    if (newBreak > 60) newBreak = 60;
+    workInput.value = newWork;
+    breakInput.value = newBreak;
+    workDuration = newWork * 60;
+    breakDuration = newBreak * 60;
+    if (isWorkMode) {
+        timeLeft = workDuration;
+    } else {
+        timeLeft = breakDuration;
+    }
+    updateDisplay();
+    settingsMenu.style.display = 'none';
+});
+
+// Hide settings menu when clicking outside
+document.addEventListener('mousedown', (e) => {
+    if (settingsMenu.style.display === 'block' && !settingsMenu.contains(e.target) && !gearIcon.contains(e.target)) {
+        settingsMenu.style.display = 'none';
+    }
+}); 
