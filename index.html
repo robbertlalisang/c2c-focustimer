@@ -7,47 +7,21 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="tomato-bg">
-      <!-- Top-left tomato, blurred -->
-      <svg class="tomato-svg tomato-blur" style="top: 5%; left: 2%; width: 120px; height: 120px;" viewBox="0 0 100 100">
-        <ellipse cx="50" cy="60" rx="45" ry="38" fill="#d32f2f"/>
-        <ellipse cx="50" cy="60" rx="40" ry="33" fill="#e53935"/>
-        <ellipse cx="50" cy="60" rx="30" ry="25" fill="#f44336" opacity="0.5"/>
-        <path d="M50 35 Q45 20 35 18" stroke="#225c2a" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <path d="M50 35 Q55 20 65 18" stroke="#225c2a" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <path d="M50 35 Q50 10 43 7" stroke="#225c2a" stroke-width="5" stroke-linecap="round" fill="none"/>
-      </svg>
-      <!-- Bottom-left tomato, less blur -->
-      <svg class="tomato-svg tomato-soft" style="bottom: 8%; left: 6%; width: 90px; height: 90px;" viewBox="0 0 100 100">
-        <ellipse cx="50" cy="60" rx="40" ry="34" fill="#d32f2f"/>
-        <ellipse cx="50" cy="60" rx="34" ry="28" fill="#e53935"/>
-        <ellipse cx="50" cy="60" rx="24" ry="18" fill="#f44336" opacity="0.5"/>
-        <path d="M50 35 Q45 20 38 18" stroke="#225c2a" stroke-width="4" stroke-linecap="round" fill="none"/>
-        <path d="M50 35 Q55 20 62 18" stroke="#225c2a" stroke-width="4" stroke-linecap="round" fill="none"/>
-        <path d="M50 35 Q50 10 45 7" stroke="#225c2a" stroke-width="4" stroke-linecap="round" fill="none"/>
-      </svg>
-      <!-- Top-right tomato, recognizable -->
-      <svg class="tomato-svg tomato-clear" style="top: 10%; right: 5%; width: 110px; height: 110px;" viewBox="0 0 100 100">
-        <ellipse cx="50" cy="60" rx="44" ry="36" fill="#d32f2f"/>
-        <ellipse cx="50" cy="60" rx="38" ry="30" fill="#e53935"/>
-        <ellipse cx="50" cy="60" rx="28" ry="20" fill="#f44336" opacity="0.5"/>
-        <path d="M50 35 Q45 20 36 18" stroke="#225c2a" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <path d="M50 35 Q55 20 64 18" stroke="#225c2a" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <path d="M50 35 Q50 10 47 7" stroke="#225c2a" stroke-width="5" stroke-linecap="round" fill="none"/>
-      </svg>
-      <!-- Bottom-right tomato, soft -->
-      <svg class="tomato-svg tomato-soft" style="bottom: 6%; right: 8%; width: 80px; height: 80px;" viewBox="0 0 100 100">
-        <ellipse cx="50" cy="60" rx="36" ry="30" fill="#d32f2f"/>
-        <ellipse cx="50" cy="60" rx="30" ry="24" fill="#e53935"/>
-        <ellipse cx="50" cy="60" rx="20" ry="14" fill="#f44336" opacity="0.5"/>
-        <path d="M50 35 Q45 20 40 18" stroke="#225c2a" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-        <path d="M50 35 Q55 20 60 18" stroke="#225c2a" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-        <path d="M50 35 Q50 10 48 7" stroke="#225c2a" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-      </svg>
-    </div>
     <div class="timer-container">
         <div class="timer-header">
-            <h1>Pomodoro Timer</h1>
+            <span class="gear-icon" tabindex="0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b23a48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l0 0a2 2 0 0 1-2.83 2.83l0 0a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-0.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l0 0a2 2 0 0 1-2.83-2.83l0 0a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h0.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l0 0a2 2 0 0 1 2.83-2.83l0 0a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v0.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l0 0a2 2 0 0 1 2.83 2.83l0 0a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-0.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </span>
+        </div>
+        <div class="settings-menu" style="display:none;">
+            <label for="workInput">Work (min):</label>
+            <input type="number" id="workInput" min="1" max="60" value="25">
+            <label for="breakInput">Break (min):</label>
+            <input type="number" id="breakInput" min="1" max="60" value="5">
+            <button id="saveSettingsBtn">Save</button>
         </div>
         <div class="timer-content">
             <div class="timer-display">25:00</div>
